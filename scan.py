@@ -78,8 +78,13 @@ def update_device_status(ip, hostname, open_ports, alive, timestamp):
     if alive:
         if last_alive == "dead":
             duration = datetime.strptime(timestamp, "%Y-%m-%d %H:%M:%S") - datetime.strptime(last_timestamp, "%Y-%m-%d %H:%M:%S")
+            # 格式化 duration 的輸出
+            hours, remainder = divmod(duration.total_seconds(), 3600)
+            minutes, seconds = divmod(remainder, 60)
+            formatted_duration = f"{int(hours)} 小時 {int(minutes)} 分鐘 {int(seconds)} 秒"
             subject = f"設備 {ip} 已恢復連線"
-            message = f"設備 {ip} 於 {timestamp} 恢復連線，斷線時間持續了 {duration}"
+            message = f"設備 {ip} 於 {timestamp} 恢復連線，斷線時間持續了 {formatted_duration}"
+
             print(message)  # 在終端機中打印狀態
             send_email(subject, message)
         else:
